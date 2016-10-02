@@ -63,7 +63,7 @@ Analyze_HV <- function(x){
 # apply to all data sets
 HV_values <- lapply(N123_libraries, Analyze_HV)
 
-merged <- do.call(merge.data.frame, HV_values)
+merged_HVs <- do.call(merge.data.frame, HV_values)
 
 
 # analyze top HVs across data sets
@@ -88,4 +88,12 @@ top_HV_all <- do.call(cbind, top_HV_all)
 
 # remove NA value
 top_HV_all[4,1] <- 0
+
+top_HV_all
+plot(as.numeric(top_HV_all[,1]), type = 'b', ylim =c(0, 10))
+lines(as.numeric(top_HV_all[,2]), type = 'b', pch = 2)
+lines(as.numeric(top_HV_all[,3]), type = 'b', pch = 3)
+lines(as.numeric(top_HV_all[,4]), type = 'b', pch = 4)
+lines(as.numeric(top_HV_all[,5]), type = 'b', pch = 5)
+lines(as.numeric(top_HV_all[,6]), type = 'b', pch = 6)
 
