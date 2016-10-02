@@ -29,5 +29,8 @@ plot(HV_sorted, type = 'h')
 
 # check H3len for highest HV level
 highest_HV <- L_GAM[L_GAM$HV == 'IGHV1-18*01',]
-hist(highest_HV$H3len, breaks = 15)
+hist(highest_HV$H3len, breaks = 45)
+
+# check values of H3len
+unique(highest_HV$H3len)
 
