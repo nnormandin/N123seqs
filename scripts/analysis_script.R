@@ -24,6 +24,10 @@ HV <- L_GAM$HV
 
 # check counts of HV and sort by descending
 HV_levels <- summary(HV)
-sort(HV_levels, decreasing = TRUE)
+HV_sorted <- sort(HV_levels, decreasing = TRUE)
+plot(HV_sorted, type = 'h')
 
+# check H3len for highest HV level
+highest_HV <- L_GAM[L_GAM$HV == 'IGHV1-18*01',]
+hist(highest_HV$H3len, breaks = 15)
 
