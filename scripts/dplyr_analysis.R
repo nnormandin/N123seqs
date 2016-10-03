@@ -1,4 +1,5 @@
 # dplyr method of analysis script
+library(tidyverse)
 
 # bring into environment
 L_GAM <- read.table("~/../Desktop/N123_data/EN50_N123_FR1-N123primers_GAMKL_unique_final.txt")
