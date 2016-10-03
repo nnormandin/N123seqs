@@ -43,3 +43,7 @@ double_HV %>%
   group_by(HV) %>%
   summarise(
     total = sum(count))
+
+# plot?
+newplot <- ggplot(as.data.frame(HV_Count), aes(HV, count))
+newplot + geom_point()
