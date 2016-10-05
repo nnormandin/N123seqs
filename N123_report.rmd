@@ -174,8 +174,8 @@ top_HV_props <- top_HV_freqs /
 
 ```
 
-```{r}
-kable(top_HV_props)
+```{r, echo = FALSE}
+kable(top_HV_props, digits = 2)
 ```
 
 ```{r, fig.align = 'center'}
