@@ -72,6 +72,7 @@ AnalyzeH3len <- function(x){
 H3_len_values <- lapply(N123_libraries, AnalyzeH3len)
 
 # change plot window to 2x3
+pdf(file = 'h3len.pdf', width = 6)
 par(mfrow = c(2, 3))
 
 # plot histograms of H3len values for all 6 libraries
@@ -80,6 +81,7 @@ for(i in seq(length(H3_len_values))){
        main = names(H3_len_values)[i], xlim = c(0,30))
   # pause before each plot
   Sys.sleep(1)}
+dev.off()
 
 # return graph window back to single plot
 par(mfrow = c(1, 1))
@@ -96,18 +98,39 @@ axis(1, at = seq(1,6), labels = names(N123_libraries))
 ############# TOP HVs FROM LP_GAM ###################
 
 # get names of top 10 HVs from LP_GAM
-top_HVs <- as.data.frame(HV_analysis$LP_GAM[1:10,1])
+# this is really messy; look for a simpler way
+top_HVs <- as.character(unlist(as.data.frame(HV_analysis$LP_GAM[1:10,1])))
 
-# function to extract one HV from data set
-ExtractFreq <- function(HV, data){
-  freq <- data[data$HV == HV, 1]
-  return(freq)
+# write function to extract frequency of all HVs in a list from libraries
+ExtractHVFreqs <- function(x, HV_list){
+
+  HVFreq <- function(x, HV_name){
+    out1 <- as.data.frame(filter(x, HV == HV_name))
+    return(nrow(out1))}
+  
+  out <- sapply(HV_list, HVFreq, x= x)
+  return(out)
 }
 
-# function to extract all HVs from data set
-extract_all_freqs <- function(dat){
-  sapply(top_HVs, extract_freq, data = dat)
-}
+# apply across libraries and bind into data frame
+top_HV_freqs <- as.data.frame(do.call(cbind,
+                        lapply(N123_libraries,
+                               ExtractHVFreqs, HV_list = top_HVs)))
 
-# extract all top HVs from all data sets
-top_HV_all <- lapply(HV_values, extract_all_freqs)
+# divide by size of library to get proportion
+top_HV_props <- top_HV_freqs /
+  sapply(N123_libraries, function(x) nrow(x)) * 100
+
+# generate plot
+plot(top_HV_props$L_GAM, xaxt = 'n', ylab = 'Percentage', xlab = '',
+     cex.lab = .7, cex.axis = .7, type = 'b',
+     pch = 0, ylim = c(0, max(top_HV_props))) # square
+axis(side = 1, at = seq(1, 10), labels = top_HVs, cex.axis = .52)
+lines(top_HV_props$FR_GAM, type = 'b', pch = 1) # circle
+lines(top_HV_props$LP_GAM, type = 'b', pch = 2) # triangle
+lines(top_HV_props$L_GA, type = 'b', pch = 3) # plus
+lines(top_HV_props$FR_GA, type = 'b', pch = 4) # x
+lines(top_HV_props$LP_GA, type = 'b', pch = 5) # down triangle
+legend("topright", inset=.05, title="Library",
+       names(N123_libraries), pch = seq(0,5), horiz=FALSE,
+       cex = 0.7)
