@@ -17,18 +17,16 @@ This is N123 blah blah blah data for blah blah blah diseases blah blah HIV.
 
 ### Pre-processing
 
-The first step is to bring the six libraries into the environment using `read.table`.
-
 ```{r, include = FALSE}
-L_GAM <- read.table("~/N123seqs/data/EN51_N123primersonly_GAMKL_unique_final.txt")
-FR_GAM <- read.table("~/N123seqs/data/EN50_N123_FR1-N123primers_GAMKL_unique_final.txt")
-LP_GAM <- read.table("~/N123seqs/data/EN52_N123_LP_GAMKL_unique_final.txt")
-L_GA <- read.table("~/N123seqs/data/EN53_N123_FR1-N123primers_GAKL_unique_final.txt")
-FR_GA <- read.table("~/N123seqs/data/EN54_N123primersonly_GAKL_unique_final.txt")
-LP_GA <- read.table("~/N123seqs/data/EN55_N123_LP_GAKL_unique_final.txt")
+L_GAM <- read.table("~/../Desktop/N123_data/EN51_N123primersonly_GAMKL_unique_final.txt")
+FR_GAM <- read.table("~/../Desktop/N123_data/EN50_N123_FR1-N123primers_GAMKL_unique_final.txt")
+LP_GAM <- read.table("~/../Desktop/N123_data/EN52_N123_LP_GAMKL_unique_final.txt")
+L_GA <- read.table("~/../Desktop/N123_data/EN53_N123_FR1-N123primers_GAKL_unique_final.txt")
+FR_GA <- read.table("~/../Desktop/N123_data/EN54_N123primersonly_GAKL_unique_final.txt")
+LP_GA <- read.table("~/../Desktop/N123_data/EN55_N123_LP_GAKL_unique_final.txt")
 ```
 
-We can then save them as a list so that we can iterate through the libraries using custom functions.
+After loading the the six libraries into the environment using `read.table` we can then save them as a list so that we can iterate through the libraries using custom functions. In this chunk, we define and name the objects within the list called `N123_libraries`. 
 
 ```{r}
 N123_libraries <- list('L_GAM' = L_GAM, 'FR_GAM' = FR_GAM,
@@ -36,7 +34,7 @@ N123_libraries <- list('L_GAM' = L_GAM, 'FR_GAM' = FR_GAM,
                        'FR_GA' = FR_GA, 'LP_GA' = LP_GA)
 ```
 
-Since our data didn't come with attribute names embedded in the files, we will have to write a function and apply it across the libraries to manually add variable names.
+Since our data didn't come with attribute names embedded as headers in the files, we will have to write a function and apply it across the libraries to manually add variable names. The six libraries consist of 14 variables and between 2734 and 9758 instances. The variables include 'Reads', 'H3nts', 'L3nts', 'H3aas', 'L3aas', 'HV', 'HJ', 'HD', 'H3len', 'LV', 'LJ', 'L3len', 'Hiso', and 'Liso.'
 
 ```{r}
 # function to rename columns
@@ -52,6 +50,8 @@ N123_libraries <- lapply(N123_libraries, RenameCols)
 
 
 ### Analyzing HV
+
+
 
 ```{r}
 # function to sort HV count by descending frequency 
@@ -103,14 +103,11 @@ H3_len_values <- lapply(N123_libraries, AnalyzeH3len)
 ```
 
 
-```{r, include = FALSE}
-# change plot window to 2x3
-```
 
 
-```{r}
+```{r, message=FALSE, warning=FALSE, results = 'hide'}
 # plot histograms of H3len values for all 6 libraries
-png(filename = 'H3lenplots.png')
+png(filename = 'H3len.png', width = 900)
 par(mfrow = c(2, 3))
 for(i in seq(length(H3_len_values))){
   hist(H3_len_values[[i]]$H3len, breaks = 15, xlab = '', ylab = '',
@@ -119,14 +116,14 @@ dev.off()
 ```
 
 
-![](H3lenplots.png)
-# will have to center this manuall in <html> file
+![](H3len.png)
 
 
 ```{r, include = FALSE}
 # return graph window back to single plot
 par(mfrow = c(1, 1))
 ```
+
 
 ```{r, fig.align = 'center'}
 # what are the average H3len values for IGHV1-18*01 across libraries?
@@ -138,6 +135,65 @@ plot(avg_H3len, main = 'Average H3len values for IGHV1-18*01',
 axis(1, at = seq(1,6), labels = names(N123_libraries))
 ```
 
+
+### Analyzing top HV values across libraries
+
+
+```{r}
+# get names of top 10 HVs from LP_GAM
+# this is really messy; look for a simpler way
+top_HVs <- as.character(unlist(as.data.frame(HV_analysis$LP_GAM[1:10,1])))
+```
+
+
+```{r}
+# write function to extract frequency of all HVs in a list from libraries
+ExtractHVFreqs <- function(x, HV_list){
+
+  HVFreq <- function(x, HV_name){
+    out1 <- as.data.frame(filter(x, HV == HV_name))
+    return(nrow(out1))}
+  
+  out <- sapply(HV_list, HVFreq, x= x)
+  return(out)
+}
+
+# apply across libraries and bind into data frame
+top_HV_freqs <- as.data.frame(do.call(cbind,
+                        lapply(N123_libraries,
+                               ExtractHVFreqs, HV_list = top_HVs)))
+```
+
+
+```{r}
+# divide by size of library to get proportion
+top_HV_props <- top_HV_freqs /
+  sapply(N123_libraries, function(x) nrow(x)) * 100
+
+
+
+```
+
+```{r}
+kable(top_HV_props)
+```
+
+```{r, fig.align = 'center'}
+# generate plot
+plot(top_HV_props$L_GAM, xaxt = 'n', ylab = 'Percentage', xlab = '',
+     cex.lab = .7, cex.axis = .7, type = 'b',
+     pch = 0, ylim = c(0, max(top_HV_props))) # square
+axis(side = 1, at = seq(1, 10), labels = top_HVs, cex.axis = .52)
+lines(top_HV_props$FR_GAM, type = 'b', pch = 1) # circle
+lines(top_HV_props$LP_GAM, type = 'b', pch = 2) # triangle
+lines(top_HV_props$L_GA, type = 'b', pch = 3) # plus
+lines(top_HV_props$FR_GA, type = 'b', pch = 4) # x
+lines(top_HV_props$LP_GA, type = 'b', pch = 5) # down triangle
+
+legend("topright", inset=.05, title="Library",
+       names(N123_libraries), pch = seq(0,5), horiz=FALSE,
+       cex = 0.7)
+```
 
 
 
