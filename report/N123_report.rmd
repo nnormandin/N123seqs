@@ -9,6 +9,7 @@ output:
 
 ```{r, include = FALSE}
 library(dplyr)
+library(knitr)
 ```
 
 ### The data
@@ -18,12 +19,12 @@ This is N123 blah blah blah data for blah blah blah diseases blah blah HIV.
 ### Pre-processing
 
 ```{r, include = FALSE}
-L_GAM <- read.table("~/../Desktop/N123_data/EN51_N123primersonly_GAMKL_unique_final.txt")
-FR_GAM <- read.table("~/../Desktop/N123_data/EN50_N123_FR1-N123primers_GAMKL_unique_final.txt")
-LP_GAM <- read.table("~/../Desktop/N123_data/EN52_N123_LP_GAMKL_unique_final.txt")
-L_GA <- read.table("~/../Desktop/N123_data/EN53_N123_FR1-N123primers_GAKL_unique_final.txt")
-FR_GA <- read.table("~/../Desktop/N123_data/EN54_N123primersonly_GAKL_unique_final.txt")
-LP_GA <- read.table("~/../Desktop/N123_data/EN55_N123_LP_GAKL_unique_final.txt")
+L_GAM <- read.table("~/R/N123seqs/data/EN51_N123primersonly_GAMKL_unique_final.txt")
+FR_GAM <- read.table("~/R/N123seqs/data/EN50_N123_FR1-N123primers_GAMKL_unique_final.txt")
+LP_GAM <- read.table("~/R/N123seqs/data/EN52_N123_LP_GAMKL_unique_final.txt")
+L_GA <- read.table("~/R/N123seqs/data/EN53_N123_FR1-N123primers_GAKL_unique_final.txt")
+FR_GA <- read.table("~/R/N123seqs/data/EN54_N123primersonly_GAKL_unique_final.txt")
+LP_GA <- read.table("~/R/N123seqs/data/EN55_N123_LP_GAKL_unique_final.txt")
 ```
 
 After loading the the six libraries into the environment using `read.table` we can then save them as a list so that we can iterate through the libraries using custom functions. In this chunk, we define and name the objects within the list called `N123_libraries`. 
