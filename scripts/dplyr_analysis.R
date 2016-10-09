@@ -134,3 +134,5 @@ lines(top_HV_props$LP_GA, type = 'b', pch = 5) # down triangle
 legend("topright", inset=.05, title="Library",
        names(N123_libraries), pch = seq(0,5), horiz=FALSE,
        cex = 0.7)
+
+# erica pull this
