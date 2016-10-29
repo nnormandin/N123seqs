@@ -1,18 +1,19 @@
 library(tidyverse)
 
 # bring into environment
-L_GAM <- read.table("~/N123seqs/data/EN51_N123primersonly_GAMKL_unique_final.txt")
-FR_GAM <- read.table("~/N123seqs/data/EN50_N123_FR1-N123primers_GAMKL_unique_final.txt")
-LP_GAM <- read.table("~/N123seqs/data/EN52_N123_LP_GAMKL_unique_final.txt")
-L_GA <- read.table("~/N123seqs/data/EN54_N123primersonly_GAKL_unique_final.txt")
-FR_GA <- read.table("~/N123seqs/data/EN53_N123_FR1-N123primers_GAKL_unique_final.txt")
-LP_GA <- read.table("~/N123seqs/data/EN55_N123_LP_GAKL_unique_final.txt")
+L_GAM <- read.table("./data/EN51_N123primersonly_GAMKL_unique_final.txt")
+FR_GAM <- read.table("./data/EN50_N123_FR1-N123primers_GAMKL_unique_final.txt")
+LP_GAM <- read.table("./data/EN52_N123_LP_GAMKL_unique_final.txt")
+L_GA <- read.table("./data/EN54_N123primersonly_GAKL_unique_final.txt")
+FR_GA <- read.table("./data/EN53_N123_FR1-N123primers_GAKL_unique_final.txt")
+LP_GA <- read.table("./data/EN55_N123_LP_GAKL_unique_final.txt")
 
 # save as list
 N123_libraries <- list('L_GAM' = L_GAM, 'FR_GAM' = FR_GAM,
                        'LP_GAM' = LP_GAM, 'L_GA' = L_GA,
                        'FR_GA' = FR_GA, 'LP_GA' = LP_GA)
 
+rm(list(L_GAM, FR_GAM, LP_GAM, L_GA, FR_GA, LP_GA))
 
 # function to rename columns
 RenameCols <- function(x){
@@ -134,5 +135,3 @@ lines(top_HV_props$LP_GA, type = 'b', pch = 5) # down triangle
 legend("topright", inset=.05, title="Library",
        names(N123_libraries), pch = seq(0,5), horiz=FALSE,
        cex = 0.7)
-
-# pulled yo - and on my work computer, no less
